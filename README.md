@@ -1,6 +1,6 @@
 # STS Automation
 <div align="center">
-  <img src="/assets/bbf.jpg" alt="BBF Labs Logo" width="150" height="150" style="border-radius:15%;">
+  <!-- <img src="/assets/bbf.jpg" alt="BBF Labs Logo" width="150" height="150" style="border-radius:15%;"> -->
   <h2>
     <span style="background: linear-gradient(45deg, #FF6B6B, #4ECDC4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
       A BBF Labs Initiative
