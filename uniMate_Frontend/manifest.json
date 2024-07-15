@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "name": "UniMate: Automate Your Uni Life",
+  "description": "A chrome extension to automate tiresome online tasks",
+  "action": {
+    "default_popup": "js/index.html",
+    "default_title": "UniMate: Automate Your Uni Life"
+  }
+}
