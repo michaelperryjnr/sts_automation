@@ -123,7 +123,7 @@ async function handleRadiosAndTextAreas() {
   if (submitBtn) {
     userConfirmation = confirm("Do you want to submit the form?");
     if (userConfirmation) {
-      submitBtn.click();
+      submitBtn[0].click();
       console.log("Form submitted successfully.");
     } else {
       console.log("Form submission cancelled by user");
