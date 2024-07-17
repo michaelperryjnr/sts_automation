@@ -41,11 +41,29 @@ Important: Ensure all your courses are evaluated before proceeding.
 3. Copy and paste the code from `checkInToAllExams.js`.
 4. Press `Enter` to run the script.
 
+## Filling DCIT Survey
+
+Important: Ensure you have selected your student type and group number before using automation.
+
+1. Open the developer tools and navigate to the console tab.
+2. Enable pasting by entering:
+    ```cpp
+   allow pasting
+   ```
+3. Copy and paste the code from `surveyAutomation.js`.
+4. Press `Enter` to run the script.
+5. When prompted, enter the `IDs `of your teammates one after the other with yours coming last.
+6. Enter your `score` schema's for randomized and controlled allocation.
+
+### Execution
+Upon execution, a pop-up will appear asking for `IDs` and `scores`, enter them respectively.
+
 ## 🎉 Success!
 
 Congratulations! You've successfully:
 - Evaluated your courses ✅
 - Checked in to your exams ✅
+- Filled DCIT survey seamlessly✅
 
 Time to celebrate! 🥳💃🤘
 
