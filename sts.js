@@ -4,11 +4,20 @@
 async function handleRadiosAndTextAreas() {
   // Check and confirm all radios are checked
   const stronglyAgreeRadios = document.querySelectorAll("input[value='5']");
-  stronglyAgreeRadios.forEach((radio) => (radio.checked = true));
+  const allRadiosChecked = await Promise.all(
+    Array.from(stronglyAgreeRadios).map(
+      (radio) =>
+        new Promise((resolve) => {
+          radio.checked = true;
+          radio.dispatchEvent(new Event("change", { bubbles: true }));
+          resolve(radio.checked);
+        })
+    )
+  );
 
-  // Check if all radios are checked
-  if (stronglyAgreeRadios.length !== 19) {
-    console.error("Not all radio buttons were checked successfully.");
+  //check for all radios being checked
+  if (!allRadiosChecked.every((checked) => checked)) {
+    console.error("Not all radios where checked successfully");
     return;
   }
 
@@ -59,56 +68,56 @@ async function handleRadiosAndTextAreas() {
     "The course has a good balance of theory and practice.",
   ];
 
-  // Function to generate Responses
+  // Function to generate responses
   function generateResponse(question) {
-    //function to get randomItems form possibleValues array
-    const getRandomItems = (arr, num) => {
-      const shuffled = arr.sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, num);
-    };
+    const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-    //return response passed on question content
+    let response;
     if (question.includes("like best")) {
-      const positives = getRandomItems(possibleValues, 3);
-
-      return `What I liked best about the course was that ${
-        positives[0]
-      } Additionally, ${positives[1].toLowerCase()} Moreover, ${positives[2].toLowerCase()}`;
+      const positive = getRandomItem(possibleValues);
+      response = `What I liked best about the course was that ${positive.toLowerCase()}`;
     } else if (question.includes("improvement")) {
-      const improvements = getRandomItems(possibleValues, 2);
-
-      return `While the course is excellent overall, there's always room for improvement. Perhaps ${improvements[0].toLowerCase()} could be further enhanced. Additionally, it might be beneficial if ${improvements[1].toLowerCase()}`;
+      const improvement = getRandomItem(possibleValues);
+      response = `The course is excellent, but ${improvement.toLowerCase()} could be improved.`;
     } else {
-      const general = getRandomItems(possibleValues, 3);
-
-      return `Overall, the course was very informative and well-delivered. ${
-        general[0]
-      } Furthermore, ${general[1].toLowerCase()} Lastly, ${general[2].toLowerCase()}`;
+      const general = getRandomItem(possibleValues);
+      response = `Overall, the course was very good. ${general}`;
     }
+
+    // Truncate response to fit within the max length of the text area
+    return response.length > 150
+      ? response.substring(0, 147) + "..."
+      : response;
   }
 
-  //Handle text areas and check if they are filled
+  // Handle text areas and check if they are filled
   const textAreaCards = document.querySelectorAll(
     ".card-content textarea[name^='OQ']"
   );
+  if (textAreaCards.length === 0) {
+    console.error("No text areas found with names starting with 'OQ'.");
+    return;
+  }
 
-  let filledTextAreas = 0;
-
-  textAreaCards.forEach((textArea) => {
-    //get text card anf question
-    const questionCard = textArea.closest(".card");
-    const questionText = questionCard
-      .querySelector(".card-title")
-      .textContent.trim();
-
-    //Respond and set textArea value
-    const response = generateResponse(questionText);
-    textArea.value = response;
-    filledTextAreas++;
-  });
+  await Promise.all(
+    Array.from(textAreaCards).map(async (textArea) => {
+      const questionCard = textArea.closest(".card");
+      const questionText = questionCard
+        ? questionCard.querySelector(".card-title").textContent.trim()
+        : "";
+      const response = generateResponse(questionText);
+      textArea.value = response;
+      textArea.dispatchEvent(new Event("change", { bubbles: true }));
+      textArea.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise((resolve) => setTimeout(resolve, 100)); // small delay to make sure value is set
+    })
+  );
 
   // Check if all text areas were filled
-  if (filledTextAreas !== textAreaCards.length) {
+  const allTextAreasFilled = Array.from(textAreaCards).every(
+    (textarea) => textarea.value !== ""
+  );
+  if (!allTextAreasFilled) {
     console.error("Not all text areas were filled successfully.");
     return;
   }
@@ -116,14 +125,15 @@ async function handleRadiosAndTextAreas() {
   console.log("All radios checked and questions answered, Hello from Michael!");
   console.log(" This is Michael's way of being Michael :D");
 
-  //optional submission after filling
-  const submitBtn = document.querySelectorAll("#submitbtn");
+  //Optional submission after filling
+  const submitBtn = document.querySelector("#submitbtn");
   let userConfirmation = false;
   //Options after submit button is found
   if (submitBtn) {
     userConfirmation = confirm("Do you want to submit the form?");
     if (userConfirmation) {
-      submitBtn[0].click();
+      await new Promise((resolve) => setTimeout(resolve, 500)); //Delay before submission.... This is to stop potential rate limiting
+      submitBtn.click();
       console.log("Form submitted successfully.");
     } else {
       console.log("Form submission cancelled by user");
@@ -134,7 +144,7 @@ async function handleRadiosAndTextAreas() {
 
   return {
     radiosChecked: stronglyAgreeRadios.length,
-    textAreasFilled: filledTextAreas,
+    // textAreasFilled: textAreaCards.length,
     formSubmitted: submitBtn && userConfirmation,
   };
 }
