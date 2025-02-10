@@ -1,96 +1,84 @@
-# STS Automation
 <div align="center">
-  <!-- <img src="/assets/bbf.jpg" alt="BBF Labs Logo" width="150" height="150" style="border-radius:15%;"> -->
-  <h2>
+  <h1>STS Automation Suite</h1>
+  <h3>
     <span style="background: linear-gradient(45deg, #FF6B6B, #4ECDC4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
       A BBF Labs Initiative
     </span>
-  </h2>
-  <p><em>Think Build Deploy</em></p>
+  </h3>
+  <p><em>Think • Build • Deploy</em></p>
+
+  [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+  [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](CONTRIBUTING.md)
 </div>
 
----
+## 🚀 Overview
 
-Automate your course evaluations and exam check-ins effortlessly!
+Streamline your academic tasks with our comprehensive automation suite. This tool helps you efficiently manage course evaluations, exam check-ins, and DCIT surveys - saving you valuable time while ensuring accurate submissions.
 
-## Course Evaluation Automation
+## 🎯 Features
 
-Say goodbye to manually evaluating all 6 courses. Follow these simple steps:
+- **Course Evaluation Automation** - Evaluate multiple courses efficiently
+- **Automated Exam Check-ins** - Seamlessly register for all your exams
+- **DCIT Survey Automation** - Quick and accurate survey completion
+- **Smart Response Generation** - Thoughtful, varied feedback for evaluations
 
-1. Copy the code from `sts.js`.
-2. Navigate to STS and select a course to evaluate.
-3. Open the developer tools and switch to the console tab.
-4. Enable pasting by entering:
-   ```cpp
+## 📋 Quick Start Guides
+
+### Course Evaluation Automation
+
+1. Copy the code from `sts.js`
+2. Navigate to STS and select your course
+3. **Important:** Select the lecturer to evaluate
+4. Open developer tools (F12) and switch to console
+5. Enable pasting:
+   ```
    allow pasting
    ```
-5. Paste the code from `sts.js` and hit `Enter`.
+6. Paste the code and press Enter
 
-### Submission
-Upon execution, a pop-up will appear asking for submission confirmation. Choose your preferred option.
+### Exam Check-in Automation
 
-## Checking In to All Exams
+⚠️ **Prerequisites:** Ensure all course evaluations are completed first
 
-Important: Ensure all your courses are evaluated before proceeding.
-
-1. Open the developer tools and navigate to the console tab.
-2. Enable pasting by entering:
-    ```cpp
+1. Open developer tools console (F12)
+2. Enable pasting:
+   ```
    allow pasting
    ```
-3. Copy and paste the code from `checkInToAllExams.js`.
-4. Press `Enter` to run the script.
+3. Copy and paste code from `checkInToAllExams.js`
+4. Execute the script
 
-## Filling DCIT Survey
+### DCIT Survey Automation
 
-Important: Ensure you have selected your student type and group number before using automation.
+⚠️ **Prerequisites:** Select your student type and group number first
 
-1. Open the developer tools and navigate to the console tab.
-2. Enable pasting by entering:
-    ```cpp
+1. Open developer tools console (F12)
+2. Enable pasting:
+   ```
    allow pasting
    ```
-3. Copy and paste the code from `surveyAutomation.js`.
-4. Press `Enter` to run the script.
-5. When prompted, enter the `IDs `of your teammates one after the other with yours coming last.
-6. Enter your `score` schema's for randomized and controlled allocation.
+3. Copy and paste code from `surveyAutomation.js`
+4. Follow the prompts to enter:
+   - Team member IDs (yours last)
+   - Score allocation preferences
 
-### Execution
-Upon execution, a pop-up will appear asking for `IDs` and `scores`, enter them respectively.
+## 🤝 Contributing
 
-## 🎉 Success!
+We believe in the power of community collaboration! Your contributions can help make this tool even better.
 
-Congratulations! You've successfully:
-- Evaluated your courses ✅
-- Checked in to your exams ✅
-- Filled DCIT survey seamlessly✅
-
-Time to celebrate! 🥳💃🤘
-
----
-
-### Important Notes:
-- Always review the generated responses before submission to ensure accuracy.
-- Use this tool responsibly and in accordance with your institution's policies.
-- If you encounter any issues or have suggestions for improvements, please open an issue or submit a pull request.
-
-## Contributing
-
-We welcome contributions! Feel free to fork this repository and submit pull requests to enhance functionality or documentation.
-
-### Current Contributors
+### Our Amazing Contributors
 
 <table>
   <tr>
     <td align="center">
       <a href="https://github.com/michaelperryjnr">
-        <img src="https://github.com/michaelperryjnr.png" width="100px;" alt="Michael Perry Jr." style="border-radius:50%;"><br />
+        <img src="https://github.com/michaelperryjnr.png" width="100px;" alt="Michael Perry Jr." style="border-radius:50%"/><br />
         <sub><b>Michael Perry Jr.</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/bundana">
-        <img src="https://github.com/bundana.png" width="100px;" alt="Bundana" style="border-radius:50%;"><br />
+        <img src="https://github.com/bundana.png" width="100px;" alt="Bundana" style="border-radius:50%"/><br />
         <sub><b>Bundana</b></sub>
       </a>
     </td>
@@ -99,35 +87,32 @@ We welcome contributions! Feel free to fork this repository and submit pull requ
 
 ### How to Contribute
 
-We're thrilled you're considering contributing to our project! Here's a quick guide to get you started:
-
-<details>
-<summary>📋 Step-by-Step Contribution Guide</summary>
+We welcome all contributions, big or small! Here's how to get started:
 
 1. 🍴 Fork the repository
-2. 🌿 Create a new branch `git checkout -b feature/YourAmazingFeature`
-3. 🛠️ Make your awesome changes
-4. 💾 Commit your changes `git commit -m '✨ Add some AmazingFeature'`
-5. 🚀 Push to your branch `git push origin feature/YourAmazingFeature`
+2. 🌿 Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. 💻 Make your changes
+4. 📝 Commit with clear messages (`git commit -m 'Add: Amazing Feature'`)
+5. 🚀 Push to your branch (`git push origin feature/AmazingFeature`)
 6. 🔄 Open a Pull Request
-</details>
 
-#### 💡 Got a Big Idea?
+For major changes, please open an issue first to discuss what you'd like to change.
 
-For major changes, we'd love to hear from you first! Please open an issue to discuss your ideas before diving into coding.
+## ⚠️ Important Notes
 
-#### 🌟 Every Contribution Counts!
+- Review generated responses before submission
+- Use responsibly and in accordance with institutional policies
+- Report issues or suggest improvements via GitHub issues
 
-Whether it's fixing a typo, improving documentation, or adding a new feature - your contributions are greatly appreciated!
+## 📄 License
 
----
-
-Happy coding! 🎉👩‍💻👨‍💻
-
-## License
-
-This project is open-source and available under the [MIT License](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-Happy automating! 🚀
+<div align="center">
+  <h3>🎉 Ready to Automate?</h3>
+  <p>Start saving time and reducing manual work today!</p>
+  
+  [![Get Started](https://img.shields.io/badge/Get%20Started-4ECDC4?style=for-the-badge)](docs/getting-started.md)
+</div>
