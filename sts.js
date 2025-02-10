@@ -18,72 +18,93 @@ async function handleRadiosAndTextAreas() {
    */
 
   const possibleValues = [
-    "The teaching is outstanding.",
-    "The explanations are very clear.",
-    "The instructor is very knowledgeable.",
-    "The lessons are well-structured.",
-    "The teaching style is very engaging.",
-    "The examples used are very relevant.",
-    "The pace of teaching is just right.",
-    "The feedback provided is very helpful.",
-    "The teaching materials are excellent.",
-    "The instructor is very approachable.",
-    "The course content is very comprehensive.",
-    "The teaching methods are innovative.",
-    "The practical examples are very useful.",
-    "The course is very interactive.",
-    "The instructor is very supportive.",
-    "The teaching environment is very positive.",
-    "The learning experience is very enjoyable.",
-    "The teaching techniques are very effective.",
-    "The instructor makes complex topics easy to understand.",
-    "The course is very well-organized.",
-    "The instructor encourages participation.",
-    "The assignments are very challenging and rewarding.",
-    "The instructor is very enthusiastic.",
-    "The learning resources are very helpful.",
-    "The course fosters critical thinking.",
-    "The instructor is very patient.",
-    "The course encourages active learning.",
-    "The instructor is very inspiring.",
-    "The course materials are very up-to-date.",
-    "The instructor promotes a growth mindset.",
-    "The course encourages collaboration among students.",
-    "The instructor provides timely feedback.",
-    "The teaching style is very adaptable to different learning needs.",
-    "The instructor is very engaging and keeps the class lively.",
-    "The course content is relevant to real-world applications.",
-    "The instructor uses a variety of teaching methods to cater to all students.",
-    "The course promotes problem-solving skills.",
-    "The instructor creates a welcoming and inclusive classroom environment.",
-    "The course has a good balance of theory and practice.",
+    "The teaching is outstanding",
+    "The explanations are clear",
+    "The instructor is knowledgeable",
+    "The lessons are structured well",
+    "The teaching style engages",
+    "The examples are relevant",
+    "The pace is perfect",
+    "The feedback helps greatly",
+    "The materials excel",
+    "The instructor welcomes questions",
+    "The content is thorough",
+    "The methods innovate",
+    "The examples help",
+    "The course engages",
+    "The support is great",
+    "The environment works",
+    "Learning is fun",
+    "Techniques work well",
+    "Complex topics become simple",
+    "Organization is solid",
+    "Participation thrives",
+    "Assignments challenge well",
+    "Enthusiasm shows",
+    "Resources help learning",
+    "Critical thinking grows",
+    "Patience stands out",
+    "Active learning thrives",
+    "Inspiration flows",
+    "Materials stay current",
+    "Growth mindset develops",
+    "Collaboration works",
+    "Feedback comes quickly",
+    "Teaching adapts well",
+    "Classes stay lively",
+    "Real-world links exist",
+    "Methods vary nicely",
+    "Problem-solving improves",
+    "Environment includes all",
+    "Theory meets practice"
   ];
 
-  // Function to generate Responses
+  // Function to generate Responses within character limit
   function generateResponse(question) {
+    const MAX_CHARS = 149;
+    
     //function to get randomItems form possibleValues array
     const getRandomItems = (arr, num) => {
       const shuffled = arr.sort(() => 0.5 - Math.random());
       return shuffled.slice(0, num);
     };
 
-    //return response passed on question content
+    //function to create response and ensure it's within character limit
+    const createLimitedResponse = (template, items) => {
+      let response = template(items);
+      if (response.length > MAX_CHARS) {
+        // If too long, try with fewer items
+        while (response.length > MAX_CHARS && items.length > 1) {
+          items.pop();
+          response = template(items);
+        }
+        // If still too long, truncate
+        if (response.length > MAX_CHARS) {
+          response = response.substring(0, MAX_CHARS);
+        }
+      }
+      return response;
+    };
+
+    //return response based on question content
     if (question.includes("like best")) {
-      const positives = getRandomItems(possibleValues, 3);
-
-      return `What I liked best about the course was that ${
-        positives[0]
-      } Additionally, ${positives[1].toLowerCase()} Moreover, ${positives[2].toLowerCase()}`;
+      const positives = getRandomItems(possibleValues, 2);
+      return createLimitedResponse(items => 
+        `I liked that ${items[0].toLowerCase()}. Also, ${items[1].toLowerCase()}.`, 
+        positives
+      );
     } else if (question.includes("improvement")) {
-      const improvements = getRandomItems(possibleValues, 2);
-
-      return `While the course is excellent overall, there's always room for improvement. Perhaps ${improvements[0].toLowerCase()} could be further enhanced. Additionally, it might be beneficial if ${improvements[1].toLowerCase()}`;
+      const improvements = getRandomItems(possibleValues, 1);
+      return createLimitedResponse(items => 
+        `Could improve how ${items[0].toLowerCase()}.`, 
+        improvements
+      );
     } else {
-      const general = getRandomItems(possibleValues, 3);
-
-      return `Overall, the course was very informative and well-delivered. ${
-        general[0]
-      } Furthermore, ${general[1].toLowerCase()} Lastly, ${general[2].toLowerCase()}`;
+      const general = getRandomItems(possibleValues, 2);
+      return createLimitedResponse(items => 
+        `The course was great. ${items[0].toLowerCase()}. ${items[1].toLowerCase()}.`, 
+        general
+      );
     }
   }
 
@@ -95,7 +116,7 @@ async function handleRadiosAndTextAreas() {
   let filledTextAreas = 0;
 
   textAreaCards.forEach((textArea) => {
-    //get text card anf question
+    //get text card and question
     const questionCard = textArea.closest(".card");
     const questionText = questionCard
       .querySelector(".card-title")
@@ -104,6 +125,7 @@ async function handleRadiosAndTextAreas() {
     //Respond and set textArea value
     const response = generateResponse(questionText);
     textArea.value = response;
+    console.log(`Character count for response: ${response.length}`);
     filledTextAreas++;
   });
 
