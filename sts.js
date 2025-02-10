@@ -18,93 +18,65 @@ async function handleRadiosAndTextAreas() {
    */
 
   const possibleValues = [
-    "The teaching is outstanding",
-    "The explanations are clear",
-    "The instructor is knowledgeable",
-    "The lessons are structured well",
-    "The teaching style engages",
-    "The examples are relevant",
-    "The pace is perfect",
-    "The feedback helps greatly",
-    "The materials excel",
-    "The instructor welcomes questions",
-    "The content is thorough",
-    "The methods innovate",
-    "The examples help",
-    "The course engages",
-    "The support is great",
-    "The environment works",
-    "Learning is fun",
-    "Techniques work well",
-    "Complex topics become simple",
-    "Organization is solid",
-    "Participation thrives",
-    "Assignments challenge well",
-    "Enthusiasm shows",
-    "Resources help learning",
-    "Critical thinking grows",
-    "Patience stands out",
-    "Active learning thrives",
-    "Inspiration flows",
-    "Materials stay current",
-    "Growth mindset develops",
-    "Collaboration works",
-    "Feedback comes quickly",
-    "Teaching adapts well",
-    "Classes stay lively",
-    "Real-world links exist",
-    "Methods vary nicely",
-    "Problem-solving improves",
-    "Environment includes all",
-    "Theory meets practice"
+    "The teaching is outstanding and well-paced",
+    "The explanations are clear and well-structured",
+    "The instructor shows deep knowledge and expertise",
+    "The content delivery is engaging and effective",
+    "The examples help understand complex concepts",
+    "The teaching style promotes active learning",
+    "The pace allows good understanding",
+    "The feedback helps improve learning",
+    "The course materials are comprehensive",
+    "The instructor welcomes questions and discussions",
+    "The content covers key topics thoroughly",
+    "The teaching methods engage effectively",
+    "The practical work reinforces learning",
+    "The course encourages participation",
+    "The support helps student growth",
+    "The learning environment is positive",
+    "The experience is enriching and valuable",
+    "The teaching approach is highly effective",
+    "Complex topics are explained clearly",
+    "The organization helps learning flow",
+    "Class participation is encouraged well",
+    "The assignments challenge appropriately",
+    "The enthusiasm makes learning enjoyable",
+    "Resources support learning goals",
+    "Critical thinking is developed well",
+    "Questions are answered patiently",
+    "Active participation is encouraged",
+    "The teaching inspires learning",
+    "Materials are relevant and current",
+    "Growth mindset is encouraged",
+    "Student collaboration is effective",
+    "Feedback comes regularly",
+    "Teaching adapts to student needs",
+    "Classes maintain good engagement",
+    "Real-world applications are clear",
+    "Various teaching methods are used",
+    "Problem-solving skills develop well",
+    "The environment welcomes everyone",
+    "Theory and practice balance well"
   ];
 
   // Function to generate Responses within character limit
   function generateResponse(question) {
-    const MAX_CHARS = 149;
-    
     //function to get randomItems form possibleValues array
     const getRandomItems = (arr, num) => {
       const shuffled = arr.sort(() => 0.5 - Math.random());
       return shuffled.slice(0, num);
     };
 
-    //function to create response and ensure it's within character limit
-    const createLimitedResponse = (template, items) => {
-      let response = template(items);
-      if (response.length > MAX_CHARS) {
-        // If too long, try with fewer items
-        while (response.length > MAX_CHARS && items.length > 1) {
-          items.pop();
-          response = template(items);
-        }
-        // If still too long, truncate
-        if (response.length > MAX_CHARS) {
-          response = response.substring(0, MAX_CHARS);
-        }
-      }
-      return response;
-    };
-
-    //return response based on question content
+    //return response passed on question content
     if (question.includes("like best")) {
       const positives = getRandomItems(possibleValues, 2);
-      return createLimitedResponse(items => 
-        `I liked that ${items[0].toLowerCase()}. Also, ${items[1].toLowerCase()}.`, 
-        positives
-      );
+      return `What I liked best was that ${positives[0].toLowerCase()}. Additionally, ${positives[1].toLowerCase()}.`;
     } else if (question.includes("improvement")) {
       const improvements = getRandomItems(possibleValues, 1);
-      return createLimitedResponse(items => 
-        `Could improve how ${items[0].toLowerCase()}.`, 
-        improvements
-      );
+      return `While the course is excellent, ${improvements[0].toLowerCase()} could be further enhanced for even better outcomes.`;
     } else {
       const general = getRandomItems(possibleValues, 2);
-      return createLimitedResponse(items => 
-        `The course was great. ${items[0].toLowerCase()}. ${items[1].toLowerCase()}.`, 
-        general
-      );
+      return `The course was excellent overall. ${general[0]}. Also, ${general[1].toLowerCase()}.`;
     }
   }
 
@@ -124,8 +96,14 @@ async function handleRadiosAndTextAreas() {
 
     //Respond and set textArea value
     const response = generateResponse(questionText);
-    textArea.value = response;
-    console.log(`Character count for response: ${response.length}`);
+    // Ensure response is within character limit
+    if (response.length > 149) {
+      console.warn(`Response truncated from ${response.length} characters to 149`);
+      textArea.value = response.substring(0, 149);
+    } else {
+      textArea.value = response;
+    }
+    console.log(`Response length: ${textArea.value.length} characters`);
     filledTextAreas++;
   });
 
