@@ -1,5 +1,5 @@
 /**
- * Enhanced BBF Labs Huawei Question Scraper
+ * BBF Labs Huawei DataCom Scrapper
  * Automatically extracts questions, options, answers for multiple formats
  */
 
@@ -17,14 +17,15 @@
 
         // Selectors for navigation and content
         selectors: {
-            nextButton: '.vnext, .subject-btn',
+            nextButton: '.vnext, .subject-btn, .vprv',
             questionContainer: '.right-main',
             questionType: '.type-name',
             questionText: '.main-title .editor-content',
             optionsList: '.subect-label .option-list-item',
             optionContent: '.option-content .editor-content',
             activeOption: '.option-list-active',
-            questionNumber: '.subtitle_index'
+            questionNumber: '.subtitle_index',
+            statusInfo: '.status-info'
         },
 
         // Timing configuration
@@ -51,12 +52,33 @@
         }
 
         /**
-         * Get the type of question (Multiple-Answer, Single-Answer, True/False)
+         * Get current question number and type from page
          */
-        getQuestionType(container) {
-            const typeElement = container.querySelector(config.selectors.questionType);
-            return typeElement ? typeElement.textContent.trim() : 'Unknown';
+        getCurrentQuestionNumber() {
+            const questionInfo = {
+                number: null,
+                type: null
+            };
+
+            // Get the type-name span first
+            const typeSpan = document.querySelector('.ks-title .type-name');
+            if (typeSpan) {
+                questionInfo.type = typeSpan.textContent.trim();
+            }
+
+            // Get the parent span containing both type and number
+            const parentSpan = document.querySelector('.ks-title > span');
+            if (parentSpan) {
+                const text = parentSpan.textContent.trim();
+                const match = text.match(/Question (\d+)\/(\d+)/);
+                if (match) {
+                    questionInfo.number = parseInt(match[1]);
+                }
+            }
+
+            return questionInfo;
         }
+
 
         /**
          * Clean and validate extracted text
@@ -77,21 +99,28 @@
             const correctAnswers = [];
             const optionElements = container.querySelectorAll(config.selectors.optionsList);
 
+            // First collect all options
             optionElements.forEach((option, index) => {
                 const content = option.querySelector(config.selectors.optionContent);
                 if (content) {
                     const text = this.cleanText(content.textContent);
                     options.push(text);
                     this.stats.optionsFound++;
-
-                    // Check if this option is marked as correct
-                    if (option.classList.contains('option-list-active') || 
-                        option.querySelector('.option-list-active')) {
-                        correctAnswers.push(text);
-                        this.stats.answersFound++;
-                    }
                 }
             });
+
+            // Find the answer text
+            const statusInfo = container.querySelector('.status-info');
+            if (statusInfo) {
+                const answerText = Array.from(statusInfo.childNodes)
+                    .find(node => node.textContent?.includes('Answer：'))
+                    ?.textContent?.split('Answer：')[1]?.trim();
+
+                if (answerText) {
+                    correctAnswers.push(answerText);
+                    this.stats.answersFound++;
+                }
+            }
 
             return { options, correctAnswers };
         }
@@ -101,7 +130,6 @@
          */
         async extractQuestionData(container) {
             try {
-                const questionType = this.getQuestionType(container);
                 const questionElement = container.querySelector(config.selectors.questionText);
                 const questionNumberElement = container.querySelector(config.selectors.questionNumber);
 
@@ -111,8 +139,8 @@
                 }
 
                 const questionText = this.cleanText(questionElement.textContent);
-                const questionNumber = questionNumberElement ? 
-                    this.cleanText(questionNumberElement.textContent).replace(/\.$/, '') : 
+                const questionNumber = questionNumberElement ?
+                    this.cleanText(questionNumberElement.textContent).replace(/\.$/, '') :
                     String(this.currentIndex + 1);
 
                 // Skip if text is too short
@@ -124,8 +152,8 @@
                 const { options, correctAnswers } = this.extractOptions(container);
 
                 const questionData = {
-                    type: questionType,
-                    number: questionNumber,
+                    type: this.getCurrentQuestionNumber().type || 'Unknown', // Get type from getCurrentQuestionNumber
+                    number: this.getCurrentQuestionNumber().number || questionNumber, // Get number from getCurrentQuestionNumber or use existing method
                     question: questionText,
                     options: options,
                     correctAnswers: correctAnswers,
@@ -136,7 +164,7 @@
                 this.stats.questionsFound++;
                 this.stats.totalScanned++;
 
-                console.log(`Processed question ${questionNumber}: ${questionType}`);
+                console.log(`Processed question ${questionNumber}: ${questionData.type}`);
 
             } catch (error) {
                 console.error('Error processing question:', error);
@@ -180,6 +208,41 @@
         }
 
         /**
+         * Navigate to the first question by repeatedly clicking previous until we reach Q1
+         */
+        async goToFirstQuestion() {
+            console.log('Navigating to first question...');
+            let currentNumber = this.getCurrentQuestionNumber().number; // Use new method to get number
+            let attempts = 0;
+            const maxAttempts = 70; // Safeguard against infinite loops
+
+            while (currentNumber > 1 && attempts < maxAttempts) {
+                // Find the previous button that isn't disabled
+                const prevButton = document.querySelector('.vprv.mirror-x:not(.disabled)');
+                if (!prevButton) {
+                    console.warn('Previous button not found or disabled');
+                    break;
+                }
+
+                prevButton.click();
+                await new Promise(resolve => setTimeout(resolve, config.delay.afterClick));
+
+                const newNumber = this.getCurrentQuestionNumber().number; // Use new method to get number
+                if (newNumber === currentNumber) {
+                    console.warn('Navigation appears stuck');
+                    break;
+                }
+
+                currentNumber = newNumber;
+                attempts++;
+            }
+
+            console.log(`Reached question ${currentNumber} after ${attempts} attempts`);
+            return currentNumber === 1;
+        }
+
+
+        /**
          * Export the collected data
          */
         exportData() {
@@ -194,13 +257,22 @@
             console.log('Statistics:', this.stats);
             console.log('\nCollected Data:', data);
 
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            // Create timestamp-based filename
+            const timestamp = new Date().toISOString()
+                .replace(/[:.]/g, '-')  // Replace colons and periods with hyphens
+                .replace('T', '_')      // Replace T with underscore
+                .replace('Z', '');      // Remove trailing Z
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'questions_data.json';
+            a.download = `questions_${timestamp}.json`;
             a.click();
             URL.revokeObjectURL(url);
+
+            // Alert user about upload page
+            alert('Questions scraped successfully! Please upload the downloaded JSON file as a QUIZ at: https://theminiscripts.vercel.app/pages/materialupload/upload.html');
 
             return data;
         }
@@ -213,6 +285,9 @@
             console.log(`Will process up to ${config.maxQuestions} questions`);
 
             try {
+                // Navigate to first question
+                await this.goToFirstQuestion();
+
                 // Reset state
                 this.questions = [];
                 this.currentIndex = 0;
